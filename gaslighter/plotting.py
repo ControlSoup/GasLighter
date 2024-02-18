@@ -1,10 +1,11 @@
+from __future__ import annotations
 import numpy as np
 import plotly.graph_objects as go
 
 # TODO Add titles
 # TODO Implement plottly yaml?
 def graph_by_key(
-    datadict: str,
+    datadict: dict[str,list],
     key_list: list[str],
     x_key: str,
     title: str,
@@ -28,11 +29,12 @@ def graph_by_key(
         title = title,
         xaxis_title = x_key
     )
-    if show_fig:
-        fig.show()
 
     if export_path:
         fig.write_html(export_path)
+
+    if show_fig:
+        fig.show()
 
 
 def graph_datadict(
@@ -55,35 +57,41 @@ def graph_datadict(
         fig=fig
     )
 
-# def graph_countour(
-#     datadict,
-#     x_key,
-#     y_key,
-#     z_title,
-#     z_data,
-#     title: str = "" ,
-#     export_path: bool = None,
-#     show_fig = True,
-#     fig = None
-# ):
+def graph_countour(
+    x_str, x_data,
+    y_str, y_data,
+    z_str, z_fn: function | list[list,list],
+    title: str = "" ,
+    export_path: bool = None,
+    show_fig = True,
+    fig = None,
+):
+    if fig is None:
+        fig = go.Figure()
 
+    if callable(z_fn):
+        row = []
+        for _y in y_data:
+            col = []
+            for _x in x_data:
+                col.append(z_fn(_x, _y))
+            row.append(col)
+        z_data = np.array(row)
+    else:
+        raise ValueError("ERROR| z_fn must be callable with format fn(x,y)")
 
-#     if fig is None:
-#         fig = go.Figure()
+    fig.add_trace(go.Surface(z = z_data, x = x_data, y = y_data))
+    fig.update_layout(
+        title=title,
+        scene=dict(
+            xaxis_title=x_str,
+            yaxis_title=y_str,
+            zaxis_title=z_str
+        )
+    )
 
-#     fig.data=[go.Surface(z=z_data, x=_x, y=_y)]
+    if export_path:
+        fig.write_html(export_path)
 
-#     fig.update_layout(
-#         scene=dict(
-#             title=title,
-#             xaxis_title=x_key,
-#             yaxis_title=y_key,
-#             zaxis_title=z_title
-#         )
-#     )
-
-#     if show_fig:
-#         fig.show()
-
-#     if export_path:
-#         fig.write_html(export_path)
+    if show_fig:
+        fig.show()
