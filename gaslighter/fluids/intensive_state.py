@@ -37,6 +37,7 @@ class IntensiveState:
         self.__cp = self.lookup("CPMASS")
         self.__cv = self.lookup("CVMASS")
         self.__gamma = self.lookup("ISENTROPIC_EXPANSION_COEFFICIENT")
+        self.__quality = self.lookup("Q")
 
     @property
     def pressure(self):
@@ -73,6 +74,10 @@ class IntensiveState:
     @property
     def gamma(self):
         return self.__gamma
+
+    @property
+    def quality(self):
+        return self.__quality
 
     @property
     def fluid(self):
@@ -150,3 +155,17 @@ class IntensiveState:
         check_str(prop)
         check_float(value)
         return IntensiveState(prop, value, "HMASS", self.__sp_enthalpy, self.__fluid)
+
+    def datadict(self, prefix: str):
+        return {
+            f"{prefix}.prssure [Pa]": self.__pressure,
+            f"{prefix}.temp [degK]": self.__temp,
+            f"{prefix}.density [kg/m^3]": self.__density,
+            f"{prefix}.sp_inenergy [J/kg]": self.__sp_inenergy,
+            f"{prefix}.sp_ethalpy [J/kg]": self.__sp_enthalpy,
+            f"{prefix}.sp_entropy [J/degK]": self.__sp_entropy,
+            f"{prefix}.cp [J/(kg*degK)]": self.__cp,
+            f"{prefix}.cv [J/(kg*degK)]": self.__cv,
+            f"{prefix}.gamma [-]": self.__gamma,
+            f"{prefix}.quality [-]": self.__quality
+        }

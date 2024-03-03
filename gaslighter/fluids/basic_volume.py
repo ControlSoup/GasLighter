@@ -58,3 +58,14 @@ class BasicStaticVolume:
         self.state.update_from_du(
             self.__mass / self.__volume, self.__inenergy / self.__mass
         )
+
+    def datadict(self, prefix):
+        internal = {
+            f"{prefix}.mass [kg]": self.__mass,
+            f"{prefix}.volume [kg]": self.__volume,
+            f"{prefix}.inenergy [J]": self.__inenergy
+        }
+
+        state = self.state.datadict(prefix)
+
+        return internal | state

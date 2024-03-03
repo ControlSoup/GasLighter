@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import numpy as np
 
-from ..units import convert
 from .intensive_state import IntensiveState
 
 
